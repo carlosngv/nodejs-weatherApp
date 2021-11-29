@@ -18,6 +18,41 @@ class Busquedas {
         };
     }
 
+    get paramsOpenWeather() {
+        return {
+            units: 'metric',
+            lang: 'es',
+            appid: process.env.OPENWEATHER_KEY,
+        }
+
+    }
+
+    async clima( lat, lon ) {
+
+        try {
+
+            const instance = axios.create({
+                baseURL: 'https://api.openweathermap.org/data/2.5/weather',
+                params: {...this.paramsOpenWeather, lat, lon}
+            });
+
+            const resp = await instance.get();
+            const { description } = resp.data.weather[0];
+            const { temp_min, temp_max, temp } = resp.data.main;
+
+
+            return {
+                desc: description,
+                min: temp_min,
+                max: temp_max,
+                temp,
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async ciudad( lugar = '' ) {
         try {
 
