@@ -10,6 +10,7 @@ const main = async() => {
     let opt;
     let busqueda = new Busquedas();
 
+
     do {
 
         opt = await inquirerMenu();
@@ -21,10 +22,17 @@ const main = async() => {
                 const lugar = await leerInput('Ciudad: ');
 
                 // Buscar lugares
-                const lugares = await busqueda.ciudad( lugar  );
+                const lugares = await busqueda.ciudad( lugar );
+
                 const id = await listarLugares(lugares);
+                if(id === '0') continue;
+
+                // Guardar en db
+
 
                 const { nombre, lng, lat } = lugares.find( lugar => lugar.id === id );
+
+                busqueda.agregarHistorial( nombre );
 
                 const {desc, min, max, temp} = await busqueda.clima(lat, lng);
 
@@ -45,7 +53,12 @@ const main = async() => {
                 //busqueda.ciudad( lugar );
                 break;
             case 2:
-                console.log('Historial');
+
+                busqueda.historialCapitalizado.forEach( (lugar, i) => {
+                    const idx = `${ i + 1 }.`.green;
+                    console.log(`${idx} ${lugar}`);
+                });
+
                 break;
 
         }
